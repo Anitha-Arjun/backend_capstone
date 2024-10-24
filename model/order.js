@@ -6,7 +6,7 @@ const orderSchema = new mongoose.Schema(
       type: Number,
     },
     totalamount: {
-      type: mongoose.Types.Decimal128,
+      type: Number,
       required: true,
     },
     status: {

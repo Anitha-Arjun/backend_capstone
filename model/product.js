@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     price: {
-      type: mongoose.Types.Decimal128,
+      type: Number,
       required: true,
     },
     category: {
@@ -23,6 +23,7 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     stock_info: {
+      type: String,
       enum: ["In stock", "Out of stock", "limited stock"],
       default: "In stock",
       required: true,
@@ -31,7 +32,7 @@ const productSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps }
+  { timestamps: true }
 );
 
 const Product = new mongoose.model("Product", productSchema);
