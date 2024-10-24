@@ -2,7 +2,6 @@ import express from "express";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-//import cors from "cors";
 
 dotenv.config();
 
@@ -19,14 +18,11 @@ try {
 app.use(morgan("dev")); //logger
 app.use(express.json()); //parse data to the body
 app.use(express.urlencoded({ extended: true }));
-// app.use(cors()); //allows backend to talk to frontend in the same machine
 
 //Routes
 app.get("/", (req, res) => {
   res.send("Backend For Capstone Project");
 });
-
-// app.use("/api/products", productsRouter);
 
 //Error Middleware
 app.use((e, req, res, next) => {
