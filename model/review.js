@@ -18,5 +18,8 @@ const reviewSchema = new mongoose.Schema({
   },
 });
 
+//Creating index
+reviewSchema.index({ review_by: 1 });
+
 const Review = new mongoose.model("Review", reviewSchema);
 export default Review;

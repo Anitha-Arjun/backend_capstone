@@ -22,6 +22,9 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    brand: {
+      type: String,
+    },
     stock_info: {
       type: String,
       enum: ["In stock", "Out of stock", "limited stock"],
@@ -34,6 +37,9 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+//Creating index
+productSchema.index({ product_id: 1 });
 
 const Product = new mongoose.model("Product", productSchema);
 export default Product;

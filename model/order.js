@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
+import { itemSchema } from "./item.js";
 
 const orderSchema = new mongoose.Schema(
   {
     order_id: {
       type: Number,
     },
-    totalamount: {
+    total_amount: {
       type: Number,
-      required: true,
     },
     status: {
       type: String,
@@ -15,9 +15,13 @@ const orderSchema = new mongoose.Schema(
       default: "pending",
       required: true,
     },
+    items: [itemSchema],
   },
   { timestamps: true }
 );
+
+//Creating index on order_id
+orderSchema.index({ order_id: 1 });
 
 const Order = new mongoose.model("Order", orderSchema);
 export default Order;

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import Order from "../model/order.js";
+import Item from "../model/item.js";
 
 const router = new Router();
 
@@ -85,6 +86,41 @@ router.put("/:id", async (req, res, next) => {
       res.json(`Error updating the order: ${req.params.id}`);
     }
   } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * POST /api/orders/:id/items
+ * @description create a item array for a specific order
+ */
+router.post("/:id/items", async (req, res, next) => {
+  try {
+    //find the order and add a new item
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res
+        .status(404)
+        .json({ message: `Order not found: ${req.params.id}` });
+    }
+
+    // Validate - item data
+    const { item_id, product_id, quantity } = req.body;
+    if (!item_id || product_id == null || quantity == null) {
+      return res.status(400).json({
+        message: "Missing required item fields: item_id, product_id,quantity",
+      });
+    }
+    //create an item
+    const item = await Item.create(req.body);
+    //push the item to the array in order
+    order.items.push(item);
+    //save order
+    await order.save();
+
+    res.status(201).json({ order });
+  } catch (error) {
+    console.error("Error adding item to order:", error);
     next(error);
   }
 });
