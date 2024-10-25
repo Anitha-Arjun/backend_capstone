@@ -6,7 +6,7 @@ import ordersRouter from "./routes/orders.js";
 import productsRouter from "./routes/products.js";
 import reviewsRouter from "./routes/reviews.js";
 import usersRouter from "./routes/users.js";
-//import cors from "cors";
+import cors from "cors";
 
 dotenv.config();
 
@@ -23,7 +23,7 @@ try {
 app.use(morgan("dev")); //logger
 app.use(express.json()); //parse data to the body
 app.use(express.urlencoded({ extended: true }));
-// app.use(cors()); //interacts with frontend and backend in the same machine
+app.use(cors()); //allows backend to interact with frontend in the same machine
 
 //Routes
 app.get("/", (req, res) => {
