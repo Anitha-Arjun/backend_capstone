@@ -1,10 +1,25 @@
 import mongoose from "mongoose";
 
+const reviewSchema = new mongoose.Schema({
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5,
+  },
+  comment: {
+    type: String,
+    required: true,
+    maxlength: 500,
+  },
+});
+
 const productSchema = new mongoose.Schema(
   {
     product_id: {
       type: Number,
       required: true,
+      unique: true,
     },
     product_name: {
       type: String,
@@ -17,6 +32,7 @@ const productSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
+      min: 0,
     },
     category: {
       type: String,
@@ -24,6 +40,7 @@ const productSchema = new mongoose.Schema(
     },
     brand: {
       type: String,
+      required: true,
     },
     stock_info: {
       type: String,
@@ -34,6 +51,7 @@ const productSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
     },
+    reviews: [reviewSchema],
   },
   { timestamps: true }
 );
