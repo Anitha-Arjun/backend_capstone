@@ -93,4 +93,19 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
+
+/**
+ * DELETE the quantity by id
+ */
+router.delete('/:id', async(req, res, next) => {
+  try {
+    const getById = await Product.findById(req.param.id);
+    if(getById){
+     const productId = await Product.find(Product.product_id);
+    }
+  } catch (error) {
+    
+  }
+})
+
 export default router;
