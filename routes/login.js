@@ -12,16 +12,40 @@ const router = new Router();
  * POST /api/login
  */
 
-router.post("/", async (req, res, next) => {
+router.post("/register", async (req, res, next) => {
+  const { email, password } = req.body;
   try {
-    const newLogin = await Login.create(req.body);
-    if (newLogin) {
-      res.json(newLogin);
-    } else {
-      res.status(404).json({ message: "Error creating a new login" });
+    const existingUser = await Login.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already in use" });
     }
+
+    const newUser = new Login({ email, password });
+
+    await newUser.save();
+    res.status(201).json({ message: "Registration successful" });
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/", async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    const newLogin = await Login.findOne({ email });
+    if (!newLogin) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+    // Check if password matches
+    if (password !== newLogin.password) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    // If login is successful, send user data or token
+    res.status(200).json({ message: "Login successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
   }
 });
 

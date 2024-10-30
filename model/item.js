@@ -1,10 +1,15 @@
 import mongoose from "mongoose";
 
 export const itemSchema = new mongoose.Schema({
-  item_id: {
-    type: mongoose.Types.ObjectId,
-    ref: "Item",
+  quantity: {
+    type: Number,
+    require: true,
   },
+  product_name: {
+    type: String,
+    required: true,
+  },
+
   product_id: {
     type: Number,
     require: true,

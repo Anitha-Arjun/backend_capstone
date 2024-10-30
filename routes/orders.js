@@ -1,6 +1,7 @@
 import { Router } from "express";
 import Order from "../model/order.js";
 import Item from "../model/item.js";
+import Product from "../model/product.js";
 
 const router = new Router();
 
@@ -38,15 +39,46 @@ router.get("/:id", async (req, res, next) => {
  */
 
 router.post("/", async (req, res, next) => {
+  const session = await Order.startSession();
+  session.startTransaction();
   try {
-    const newOrder = await Order.create(req.body);
-    if (newOrder) {
-      res.json(newOrder);
-    } else {
-      res.json("Cannot create a new order");
+    const { order_id, total_amount, status, items } = req.body;
+
+    const newOrder = new Order({
+      order_id,
+      total_amount,
+      status,
+      items,
+    });
+    await newOrder.save({ session });
+    // Update product quantities
+    for (let item of items) {
+      const product = await Product.findOne({
+        product_id: item.product_id,
+      }).session(session);
+      if (!product) {
+        throw new Error(`Product with ID ${item.product_id} not found`);
+      }
+
+      if (product.quantity < item.quantity) {
+        throw new Error(
+          `Insufficient stock for product: ${product.product_name}`
+        );
+      }
+
+      product.quantity -= item.quantity;
+      await product.save({ session });
     }
+
+    await session.commitTransaction();
+    res
+      .status(201)
+      .json({ message: "Order created successfully and stock updated" });
   } catch (error) {
-    next(error);
+    await session.abortTransaction();
+    res.status(500).json({ message: "Failed to create order", error });
+  } finally {
+    session.endSession();
   }
 });
 
