@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export const itemSchema = new mongoose.Schema({
-  quantity: {
+  price: {
     type: Number,
     require: true,
   },

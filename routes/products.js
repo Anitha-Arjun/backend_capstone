@@ -12,6 +12,7 @@ const router = new Router();
  */
 router.get("/", async (req, res, next) => {
   try {
+    // get all the products
     const products = await Product.find();
     res.json(products);
   } catch (error) {
@@ -24,6 +25,7 @@ router.get("/", async (req, res, next) => {
  */
 router.get("/:id", async (req, res, next) => {
   try {
+    //gets the product by id
     const productById = await Product.findById(req.params.id);
     if (productById) {
       res.json(productById);
@@ -40,8 +42,9 @@ router.get("/:id", async (req, res, next) => {
  */
 router.post("/", async (req, res, next) => {
   try {
+    //creates a new product
     const newProduct = await Product.create(req.body);
-
+    //if the product is created it will be displayed as json data else throws an error
     if (newProduct) {
       res.json(newProduct);
     } else {
@@ -57,6 +60,7 @@ router.post("/", async (req, res, next) => {
  */
 router.delete("/:id", async (req, res, next) => {
   try {
+    //find the products by id and deletes it
     const deleteById = await Product.findByIdAndDelete(req.params.id);
     if (deleteById) {
       res.json({
@@ -78,6 +82,7 @@ router.put("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const { body } = req;
+    //find the product by id and update the req.body
     const updateById = await Product.findByIdAndUpdate(id, body);
     if (updateById) {
       res.json({
@@ -92,20 +97,5 @@ router.put("/:id", async (req, res, next) => {
     // console.log(error`missing ${id}  to update`);
   }
 });
-
-
-/**
- * DELETE the quantity by id
- */
-router.delete('/:id', async(req, res, next) => {
-  try {
-    const getById = await Product.findById(req.param.id);
-    if(getById){
-     const productId = await Product.find(Product.product_id);
-    }
-  } catch (error) {
-    
-  }
-})
 
 export default router;

@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import ordersRouter from "./routes/orders.js";
 import productsRouter from "./routes/products.js";
-import reviewsRouter from "./routes/reviews.js";
-import usersRouter from "./routes/users.js";
+// import reviewsRouter from "./routes/reviews.js";
+// import usersRouter from "./routes/users.js";
 import loginRouter from "./routes/login.js";
 import cors from "cors";
 
@@ -33,8 +33,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);
-app.use("/api/reviews", reviewsRouter);
-app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 
 //Error Middleware

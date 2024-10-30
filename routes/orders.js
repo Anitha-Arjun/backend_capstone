@@ -35,58 +35,11 @@ router.get("/:id", async (req, res, next) => {
 });
 
 /**
- * POST api/orders/
- */
-
-router.post("/", async (req, res, next) => {
-  const session = await Order.startSession();
-  session.startTransaction();
-  try {
-    const { order_id, total_amount, status, items } = req.body;
-
-    const newOrder = new Order({
-      order_id,
-      total_amount,
-      status,
-      items,
-    });
-    await newOrder.save({ session });
-    // Update product quantities
-    for (let item of items) {
-      const product = await Product.findOne({
-        product_id: item.product_id,
-      }).session(session);
-      if (!product) {
-        throw new Error(`Product with ID ${item.product_id} not found`);
-      }
-
-      if (product.quantity < item.quantity) {
-        throw new Error(
-          `Insufficient stock for product: ${product.product_name}`
-        );
-      }
-
-      product.quantity -= item.quantity;
-      await product.save({ session });
-    }
-
-    await session.commitTransaction();
-    res
-      .status(201)
-      .json({ message: "Order created successfully and stock updated" });
-  } catch (error) {
-    await session.abortTransaction();
-    res.status(500).json({ message: "Failed to create order", error });
-  } finally {
-    session.endSession();
-  }
-});
-
-/**
  * DELETE /api/orders/:id
  */
 router.delete("/:id", async (req, res, next) => {
   try {
+    //finds the order by id and delete it
     const deleteOrder = await Order.findByIdAndDelete(req.params.id);
     if (deleteOrder) {
       res.json({
@@ -106,6 +59,7 @@ router.delete("/:id", async (req, res, next) => {
  */
 router.put("/:id", async (req, res, next) => {
   try {
+    //finds the order by id and update the changes to the order
     const updateOrder = await Order.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
@@ -154,6 +108,58 @@ router.post("/:id/items", async (req, res, next) => {
   } catch (error) {
     console.error("Error adding item to order:", error);
     next(error);
+  }
+});
+
+/**
+ * POST api/orders/
+ */
+
+router.post("/", async (req, res, next) => {
+  //session is created to start the transaction
+  const session = await Order.startSession();
+  session.startTransaction();
+  try {
+    const { order_id, total_amount, status, items } = req.body;
+
+    //order is created
+    const newOrder = new Order({
+      order_id,
+      total_amount,
+      status,
+      items,
+    });
+    //saved to db
+    await newOrder.save({ session });
+    // Update product quantities
+    for (let item of items) {
+      const product = await Product.findOne({
+        product_id: item.product_id,
+      }).session(session);
+      //if the product doesn't exist throws an error
+      if (!product) {
+        throw new Error(`Product with ID ${item.product_id} not found`);
+      }
+      //checks whether the product quantity is less than the item quantity
+      if (product.quantity < item.quantity) {
+        throw new Error(
+          `Insufficient stock for product: ${product.product_name}`
+        );
+      }
+      //if the above conditions are true, product quantity will be reduced and changes will be saved.
+      product.quantity -= item.quantity;
+      await product.save({ session });
+    }
+
+    await session.commitTransaction();
+    res
+      .status(201)
+      .json({ message: "Order created successfully and stock updated" });
+  } catch (error) {
+    await session.abortTransaction();
+    res.status(500).json({ message: "Failed to create order", error });
+  } finally {
+    session.endSession();
   }
 });
 
